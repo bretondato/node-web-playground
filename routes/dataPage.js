@@ -41,6 +41,9 @@ var myChart = new Chart(ctx, {
     }
 });
 */
+
+
+
 router.get('/', function(req, res, next) {
     res.render('dataPage', { pageTitle: 'Data page' });
 });
