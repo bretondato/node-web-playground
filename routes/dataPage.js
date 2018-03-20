@@ -1,6 +1,9 @@
 var Chart  = require('chart.js');
 var express = require('express');
 var router = express.Router();
+var {Device} = require('../models/device');
+const geocode = require('../location/location');
+const wearther = require('../weather/weather');
 /*
 var ctx = "myChart";
 
@@ -43,9 +46,30 @@ var myChart = new Chart(ctx, {
 */
 
 
-
 router.get('/', function(req, res, next) {
-    res.render('dataPage', { pageTitle: 'Data page' });
+
+    var dataPage = 'Data Page'
+
+    geocode.geocodeAddress('09715120', function (errorMessage, results) {
+        if (errorMessage){
+            console.log(errorMessage);
+        }else {
+            //console.log(JSON.stringify(results, undefined, 2));
+            loc = results.address;
+
+            wearther.getWeather(results.latitude, results.longitude, function (errorMessage, wResults) {
+                if (errorMessage){
+                    console.log(errorMessage);
+                }else {
+                    //console.log(JSON.stringify(wResults, undefined, 2));
+                    temp = 'The currently Temperature is ' + wResults.temperature;
+                }
+            })
+        }
+    });
+
+    res.render('dataPage', { pageTitle: dataPage,location: loc ,temperature: temp });
 });
+
 
 module.exports = router;
